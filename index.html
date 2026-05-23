@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>for papayy 💌</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,600&family=Sacramento&family=DM+Sans:ital,wght@0,300;0,400;1,300&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --deep-black: #0a0609;
+    --dark-purple: #1a0d24;
+    --mid-purple: #2d1547;
+    --dusty-pink: #c9879c;
+    --soft-pink: #e8b4c0;
+    --pale-pink: #f5dde4;
+    --magenta-glow: #d63f8c;
+    --magenta-soft: #b5407a;
+    --white-soft: #fdf6f8;
+    --star-color: #f0d6e8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--deep-black);
+    color: var(--white-soft);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* ===== CURSOR ===== */
+  .cursor-dot {
+    width: 8px; height: 8px;
+    background: var(--dusty-pink);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 99999;
+    transition: transform 0.1s ease;
+    mix-blend-mode: screen;
+  }
+
+  /* ===== CANVAS STARS ===== */
+  #starCanvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ===== PASSWORD SCREEN ===== */
+  #passwordScreen {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: radial-gradient(ellipse at 30% 40%, #2d1547 0%, #0a0609 60%, #150a1e 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    transition: opacity 1.2s ease;
+  }
+
+  #passwordScreen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 70% 60%, rgba(214,63,140,0.12) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .pw-envelope {
+    font-size: 2.8rem;
+    animation: floatEnvelope 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px rgba(214,63,140,0.6));
+  }
+
+  @keyframes floatEnvelope {
+    0%,100% { transform: translateY(0) rotate(-3deg); }
+    50% { transform: translateY(-12px) rotate(3deg); }
+  }
+
+  .pw-title {
+    font-family: 'Sacramento', cursive;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    color: var(--soft-pink);
+    text-align: center;
+    line-height: 1.3;
+    text-shadow: 0 0 30px rgba(214,63,140,0.5);
+    letter-spacing: 0.02em;
+  }
+
+  .pw-subtitle {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    color: rgba(232,180,192,0.5);
+    text-align: center;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .pw-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    max-width: 320px;
+    padding: 0 1.5rem;
+  }
+
+  .pw-input-wrap {
+    position: relative;
+    width: 100%;
+  }
+
+  .pw-input {
+    width: 100%;
+    padding: 0.9rem 1.2rem;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(214,63,140,0.25);
+    border-radius: 30px;
+    color: var(--soft-pink);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    backdrop-filter: blur(10px);
+    letter-spacing: 0.05em;
+  }
+
+  .pw-input::placeholder { color: rgba(232,180,192,0.3); }
+
+  .pw-input:focus {
+    border-color: rgba(214,63,140,0.6);
+    box-shadow: 0 0 25px rgba(214,63,140,0.2), inset 0 0 15px rgba(214,63,140,0.05);
+  }
+
+  .pw-btn {
+    width: 100%;
+    padding: 0.85rem;
+    background: linear-gradient(135deg, rgba(214,63,140,0.7), rgba(181,64,122,0.5));
+    border: 1px solid rgba(214,63,140,0.4);
+    border-radius: 30px;
+    color: var(--white-soft);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+  }
+
+  .pw-btn:hover {
+    background: linear-gradient(135deg, rgba(214,63,140,0.9), rgba(181,64,122,0.7));
+    box-shadow: 0 0 30px rgba(214,63,140,0.4);
+    transform: translateY(-1px);
+  }
+
+  .pw-error {
+    font-size: 0.75rem;
+    color: rgba(214,63,140,0.8);
+    text-align: center;
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-family: 'Caveat', cursive;
+    font-size: 1rem;
+  }
+
+  .pw-error.show { opacity: 1; }
+
+  /* ===== LOADING SCREEN ===== */
+  #loadingScreen {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background: radial-gradient(ellipse at center, #2d1547 0%, #0a0609 70%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.8s ease;
+  }
+
+  #loadingScreen.active { opacity: 1; pointer-events: all; }
+
+  .loading-text {
+    font-family: 'Sacramento', cursive;
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    color: var(--soft-pink);
+    text-shadow: 0 0 30px rgba(214,63,140,0.6);
+  }
+
+  .countdown-num {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(4rem, 12vw, 8rem);
+    color: transparent;
+    background: linear-gradient(135deg, var(--dusty-pink), var(--magenta-glow));
+    -webkit-background-clip: text;
+    background-clip: text;
+    font-style: italic;
+    text-shadow: none;
+    filter: drop-shadow(0 0 30px rgba(214,63,140,0.5));
+    transition: all 0.3s ease;
+  }
+
+  .loading-particles {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .l-particle {
+    position: absolute;
+    width: 3px; height: 3px;
+    background: var(--magenta-glow);
+    border-radius: 50%;
+    animation: particleFly 2s ease-in-out infinite;
+  }
+
+  @keyframes particleFly {
+    0% { transform: translateY(0) scale(1); opacity: 0.8; }
+    100% { transform: translateY(-80vh) scale(0); opacity: 0; }
+  }
+
+  /* ===== MAIN WEBSITE ===== */
+  #mainWebsite {
+    opacity: 0;
+    transition: opacity 1.5s ease;
+  }
+
+  #mainWebsite.visible { opacity: 1; }
+
+  /* ===== SECTION BASE ===== */
+  section {
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  /* ===== HERO SECTION ===== */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    background: radial-gradient(ellipse at 30% 30%, rgba(45,21,71,0.9) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 70%, rgba(214,63,140,0.15) 0%, transparent 50%),
+                linear-gradient(180deg, #0a0609 0%, #150a1e 50%, #0a0609 100%);
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(214,63,140,0.08) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    animation: pulseGlow 4s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes pulseGlow {
+    0%,100% { transform: translate(-50%,-50%) scale(1); opacity: 0.6; }
+    50% { transform: translate(-50%,-50%) scale(1.2); opacity: 1; }
+  }
+
+  .hero-tag {
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(214,63,140,0.7);
+    margin-bottom: 1.5rem;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+  }
+
+  .hero-main {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 5.5vw, 4rem);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--white-soft);
+    line-height: 1.3;
+    max-width: 700px;
+    text-shadow: 0 0 60px rgba(214,63,140,0.2);
+    margin-bottom: 1.2rem;
+  }
+
+  .hero-main span {
+    color: var(--dusty-pink);
+    position: relative;
+  }
+
+  .hero-sub {
+    font-family: 'DM Sans', sans-serif;
+    font-size: clamp(0.85rem, 2vw, 1rem);
+    color: rgba(232,180,192,0.6);
+    font-weight: 300;
+    font-style: italic;
+    letter-spacing: 0.05em;
+    margin-bottom: 3rem;
+  }
+
+  .scroll-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.8rem;
+    background: rgba(214,63,140,0.1);
+    border: 1px solid rgba(214,63,140,0.3);
+    border-radius: 30px;
+    color: var(--dusty-pink);
+    font-family: 'Caveat', cursive;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    text-decoration: none;
+    backdrop-filter: blur(10px);
+    animation: floatBtn 3s ease-in-out infinite;
+  }
+
+  .scroll-btn:hover {
+    background: rgba(214,63,140,0.2);
+    box-shadow: 0 0 30px rgba(214,63,140,0.3);
+    transform: translateY(-2px) !important;
+  }
+
+  @keyframes floatBtn {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  /* ===== DOODLE FLOATERS ===== */
+  .doodle-float {
+    position: absolute;
+    pointer-events: none;
+    font-size: 1.2rem;
+    opacity: 0.4;
+    animation: doodleDrift 6s ease-in-out infinite;
+  }
+
+  @keyframes doodleDrift {
+    0%,100% { transform: translateY(0) rotate(0deg); opacity: 0.35; }
+    33% { transform: translateY(-15px) rotate(8deg); opacity: 0.5; }
+    66% { transform: translateY(-8px) rotate(-5deg); opacity: 0.4; }
+  }
+
+  /* ===== SCRAPBOOK SECTION ===== */
+  #scrapbook {
+    min-height: 100vh;
+    padding: 6rem 2rem;
+    background: linear-gradient(180deg, #0a0609 0%, #130820 40%, #0d0615 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4rem;
+  }
+
+  .section-label {
+    font-family: 'Caveat', cursive;
+    font-size: 1rem;
+    color: rgba(214,63,140,0.6);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: -2rem;
+  }
+
+  .scrapbook-grid {
+    display: flex;
+    gap: 3rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+
+  .polaroid {
+    background: #fdf6f0;
+    padding: 1rem 1rem 3rem;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05), 0 4px 15px rgba(214,63,140,0.1);
+    position: relative;
+    width: 220px;
+    cursor: pointer;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+  }
+
+  .polaroid:hover {
+    box-shadow: 0 30px 80px rgba(0,0,0,0.7), 0 0 40px rgba(214,63,140,0.15);
+  }
+
+  .polaroid:nth-child(1) { transform: rotate(-4deg); }
+  .polaroid:nth-child(2) { transform: rotate(3.5deg) translateY(-20px); }
+  .polaroid:nth-child(1):hover { transform: rotate(-4deg) scale(1.05); }
+  .polaroid:nth-child(2):hover { transform: rotate(3.5deg) translateY(-20px) scale(1.05); }
+
+  .tape {
+    position: absolute;
+    width: 60px; height: 22px;
+    background: rgba(245, 221, 228, 0.65);
+    border-radius: 2px;
+    top: -11px;
+    left: 50%; transform: translateX(-50%) rotate(-2deg);
+    backdrop-filter: blur(2px);
+    z-index: 2;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  }
+
+  .tape::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    background: repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(214,63,140,0.08) 4px, rgba(214,63,140,0.08) 5px);
+  }
+
+  .polaroid-img {
+    width: 100%;
+    aspect-ratio: 1;
+    background: linear-gradient(135deg, #1a0d24 0%, #2d1547 40%, #3d1d5e 70%, #2a1040 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .polaroid-img-inner {
+    font-size: 3.5rem;
+    filter: drop-shadow(0 0 20px rgba(214,63,140,0.5));
+    animation: floatEnvelope 4s ease-in-out infinite;
+  }
+
+  .polaroid-img::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 40%, rgba(214,63,140,0.1) 100%);
+  }
+
+  .polaroid-caption {
+    position: absolute;
+    bottom: 0.8rem;
+    left: 0; right: 0;
+    text-align: center;
+    font-family: 'Caveat', cursive;
+    font-size: 0.9rem;
+    color: #6b4c5a;
+    padding: 0 0.5rem;
+    line-height: 1.3;
+  }
+
+  /* Doodle stickers on scrapbook */
+  .sticker {
+    position: absolute;
+    font-size: 1.5rem;
+    pointer-events: none;
+    filter: drop-shadow(0 2px 8px rgba(214,63,140,0.3));
+    animation: stickerFloat 5s ease-in-out infinite;
+  }
+
+  @keyframes stickerFloat {
+    0%,100% { transform: rotate(var(--r)) scale(1); }
+    50% { transform: rotate(calc(var(--r) + 8deg)) scale(1.1); }
+  }
+
+  /* ===== MESSAGES SECTION ===== */
+  #messages {
+    min-height: 100vh;
+    padding: 8rem 2rem;
+    background: radial-gradient(ellipse at 20% 50%, rgba(45,21,71,0.6) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 50%, rgba(214,63,140,0.06) 0%, transparent 50%),
+                linear-gradient(180deg, #0d0615 0%, #0a0609 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .msg-container {
+    max-width: 600px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 3.5rem;
+  }
+
+  .msg-line {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+  }
+
+  .msg-line.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .msg-line:nth-child(1) { transition-delay: 0s; }
+  .msg-line:nth-child(2) { transition-delay: 0.1s; }
+  .msg-line:nth-child(3) { transition-delay: 0.2s; }
+  .msg-line:nth-child(4) { transition-delay: 0.3s; }
+
+  .msg-num {
+    font-family: 'Sacramento', cursive;
+    font-size: 1.2rem;
+    color: rgba(214,63,140,0.4);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .msg-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.3rem, 3.5vw, 2rem);
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--white-soft);
+  }
+
+  .msg-text.highlight {
+    color: var(--dusty-pink);
+  }
+
+  .msg-text .caveat-accent {
+    font-family: 'Caveat', cursive;
+    font-style: normal;
+    font-size: 1.1em;
+    color: var(--soft-pink);
+  }
+
+  .msg-glass {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(214,63,140,0.08);
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    backdrop-filter: blur(20px);
+  }
+
+  /* ===== ENDING SECTION ===== */
+  #ending {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    background:
+      radial-gradient(ellipse at 50% 30%, rgba(214,63,140,0.18) 0%, transparent 55%),
+      radial-gradient(ellipse at 30% 70%, rgba(45,21,71,0.8) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 70%, rgba(214,63,140,0.1) 0%, transparent 50%),
+      linear-gradient(180deg, #0a0609 0%, #130820 50%, #0a0609 100%);
+    gap: 1.5rem;
+    position: relative;
+  }
+
+  .ending-glow {
+    position: absolute;
+    width: 500px; height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(214,63,140,0.12) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    pointer-events: none;
+    animation: endingPulse 5s ease-in-out infinite;
+  }
+
+  @keyframes endingPulse {
+    0%,100% { transform: translate(-50%,-50%) scale(1); opacity: 0.7; }
+    50% { transform: translate(-50%,-50%) scale(1.3); opacity: 1; }
+  }
+
+  .ending-small {
+    font-family: 'Caveat', cursive;
+    font-size: 1rem;
+    color: rgba(214,63,140,0.6);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .ending-main {
+    font-family: 'Sacramento', cursive;
+    font-size: clamp(3rem, 10vw, 7rem);
+    color: transparent;
+    background: linear-gradient(135deg, var(--dusty-pink) 0%, var(--magenta-glow) 50%, var(--soft-pink) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    line-height: 1.1;
+    filter: drop-shadow(0 0 30px rgba(214,63,140,0.4));
+  }
+
+  .ending-sub {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    font-style: italic;
+    color: rgba(232,180,192,0.7);
+    letter-spacing: 0.05em;
+  }
+
+  .ending-deco {
+    font-size: 2rem;
+    margin: 0.5rem 0;
+    animation: floatEnvelope 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 15px rgba(214,63,140,0.5));
+  }
+
+  .replay-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 2rem;
+    background: rgba(214,63,140,0.12);
+    border: 1px solid rgba(214,63,140,0.35);
+    border-radius: 30px;
+    color: var(--dusty-pink);
+    font-family: 'Caveat', cursive;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    backdrop-filter: blur(10px);
+    margin-top: 1rem;
+  }
+
+  .replay-btn:hover {
+    background: rgba(214,63,140,0.25);
+    box-shadow: 0 0 30px rgba(214,63,140,0.3);
+    transform: scale(1.05);
+  }
+
+  /* ===== FADE-UP ANIMATION ===== */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+  }
+
+  .fade-up.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .fade-up:nth-child(2) { transition-delay: 0.15s; }
+  .fade-up:nth-child(3) { transition-delay: 0.3s; }
+  .fade-up:nth-child(4) { transition-delay: 0.45s; }
+
+  /* ===== FLOATING HEARTS ===== */
+  .floating-heart {
+    position: fixed;
+    pointer-events: none;
+    font-size: 0.8rem;
+    animation: heartRise 3s ease-out forwards;
+    z-index: 9999;
+    opacity: 0;
+  }
+
+  @keyframes heartRise {
+    0% { transform: translateY(0) scale(0.5); opacity: 0.8; }
+    100% { transform: translateY(-120px) scale(1.2) rotate(20deg); opacity: 0; }
+  }
+
+  /* ===== PARALLAX ELEMENTS ===== */
+  .parallax-layer {
+    will-change: transform;
+    transition: transform 0.1s linear;
+  }
+
+  /* ===== GLASS DIVIDER ===== */
+  .divider {
+    width: 1px;
+    height: 80px;
+    background: linear-gradient(180deg, transparent, rgba(214,63,140,0.4), transparent);
+    margin: 0 auto;
+  }
+
+  /* ===== SCROLLBAR ===== */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--deep-black); }
+  ::-webkit-scrollbar-thumb { background: rgba(214,63,140,0.4); border-radius: 10px; }
+
+  /* ===== MOBILE ===== */
+  @media (max-width: 600px) {
+    .scrapbook-grid { gap: 2rem; }
+    .polaroid { width: 170px; }
+    .polaroid:nth-child(1) { transform: rotate(-3deg); }
+    .polaroid:nth-child(2) { transform: rotate(2.5deg) translateY(-10px); }
+    .msg-glass { padding: 1.2rem; }
+  }
+
+  /* ===== PROGRESS BAR ===== */
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--magenta-glow), var(--dusty-pink));
+    z-index: 100;
+    transition: width 0.1s linear;
+    box-shadow: 0 0 8px rgba(214,63,140,0.6);
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="progress-bar" id="progressBar" style="width:0%"></div>
+<canvas id="starCanvas"></canvas>
+
+<!-- ===== PASSWORD SCREEN ===== -->
+<div id="passwordScreen">
+  <div class="pw-envelope">💌</div>
+  <div class="pw-title">Only for someone special 💌</div>
+  <div class="pw-subtitle">enter your name to open</div>
+  <div class="pw-form">
+    <div class="pw-input-wrap">
+      <input type="text" class="pw-input" id="pwInput" placeholder="nama kamu..." autocomplete="off" />
+    </div>
+    <button class="pw-btn" id="pwBtn">masuk →</button>
+    <div class="pw-error" id="pwError">hmm... coba lagi ya 🌸</div>
+  </div>
+</div>
+
+<!-- ===== LOADING SCREEN ===== -->
+<div id="loadingScreen">
+  <div class="loading-particles" id="loadingParticles"></div>
+  <div class="loading-text">Preparing something for you…</div>
+  <div class="countdown-num" id="countdownNum">5</div>
+</div>
+
+<!-- ===== MAIN WEBSITE ===== -->
+<div id="mainWebsite">
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-glow"></div>
+
+    <!-- Doodle floaters -->
+    <div class="doodle-float" style="top:15%;left:8%;animation-delay:0s;">✦</div>
+    <div class="doodle-float" style="top:25%;right:10%;animation-delay:1.5s;font-size:0.9rem;">♡</div>
+    <div class="doodle-float" style="bottom:20%;left:12%;animation-delay:0.8s;font-size:0.7rem;">✧</div>
+    <div class="doodle-float" style="bottom:30%;right:8%;animation-delay:2s;">✿</div>
+    <div class="doodle-float" style="top:40%;left:4%;animation-delay:1s;font-size:0.8rem;">⋆</div>
+    <div class="doodle-float" style="top:60%;right:5%;animation-delay:0.5s;font-size:0.7rem;">🦋</div>
+
+    <div class="parallax-layer">
+      <div class="hero-tag fade-up">a little note, just for you</div>
+      <h1 class="hero-main fade-up">
+        for someone who has been<br>
+        <span>trying their best</span> lately.
+      </h1>
+      <p class="hero-sub fade-up">i know things haven't been easy lately.</p>
+      <a href="#scrapbook" class="scroll-btn fade-up">scroll slowly ♡</a>
+    </div>
+  </section>
+
+  <!-- SCRAPBOOK -->
+  <section id="scrapbook">
+    <div class="section-label fade-up">✦ Kyuttt nyaaa ✦</div>
+
+    <div class="scrapbook-grid fade-up">
+      <!-- Stickers -->
+      <div class="sticker" style="--r:-12deg;top:-20px;left:-15px;">⭐</div>
+      <div class="sticker" style="--r:8deg;top:-10px;right:20px;animation-delay:1s;">💫</div>
+      <div class="sticker" style="--r:-6deg;bottom:10px;left:10px;animation-delay:2s;">🌸</div>
+      <div class="sticker" style="--r:15deg;bottom:-15px;right:-10px;animation-delay:0.5s;">✿</div>
+
+      <div class="polaroid">
+        <div class="tape"></div>
+ <div class="polaroid-img">
+  <img src="Screenshot_20260524-002608.jpg" style="width:100%;height:100%;object-fit:cover;display:block;" />
+</div>
+        <div class="polaroid-caption">still shining even<br>on hard days.</div>
+      </div>
+
+      <div class="polaroid">
+        <div class="tape" style="left:30%;transform:rotate(5deg);"></div>
+<div class="polaroid-img" style="background:#1a0d24;">
+  <img src="Screenshot_20260524-002632.jpg" style="width:100%;height:100%;object-fit:cover;display:block;" />
+</div>
+        <div class="polaroid-caption">thank you<br>for staying. ♡</div>
+      </div>
+    </div>
+
+    <!-- Small doodle decor -->
+    <div style="text-align:center;font-size:1.3rem;opacity:0.35;letter-spacing:1.5rem;" class="fade-up">
+      ♡ ✦ ✿ ⋆ 🦋
+    </div>
+  </section>
+
+  <!-- MESSAGES -->
+  <section id="messages">
+    <div class="msg-container">
+
+      <div class="msg-line">
+        <span class="msg-num">01 ·</span>
+        <div class="msg-glass">
+          <p class="msg-text">"aku tau akhir-akhir ini <span class="caveat-accent">ga gampang.</span>"</p>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="msg-line">
+        <span class="msg-num">02 ·</span>
+        <p class="msg-text highlight">"tapi kamu berhasil sampai sejauh ini."</p>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="msg-line">
+        <span class="msg-num">03 ·</span>
+        <div class="msg-glass">
+          <p class="msg-text">"dan itu <span class="caveat-accent">keren banget.</span>"</p>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="msg-line">
+        <span class="msg-num">04 ·</span>
+        <p class="msg-text highlight">"jangan lupa istirahat ya, <span class="caveat-accent">papayy.</span> 🌙"</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ENDING -->
+  <section id="ending">
+    <div class="ending-glow"></div>
+
+    <!-- Floaters -->
+    <div class="doodle-float" style="top:15%;left:10%;font-size:1rem;">✦</div>
+    <div class="doodle-float" style="top:20%;right:12%;font-size:0.8rem;animation-delay:1s;">♡</div>
+    <div class="doodle-float" style="bottom:15%;left:15%;animation-delay:2s;">✧</div>
+    <div class="doodle-float" style="bottom:20%;right:10%;animation-delay:0.5s;font-size:0.9rem;">✿</div>
+
+    <div class="ending-small fade-up">✦ a note for you ✦</div>
+    <div class="ending-deco fade-up">🌷</div>
+    <h2 class="ending-main fade-up">good job, papayy.</h2>
+    <p class="ending-sub fade-up">proud of you, always.</p>
+    <p style="font-family:'DM Sans',sans-serif;font-size:0.8rem;color:rgba(232,180,192,0.35);margin-top:0.5rem;font-style:italic;" class="fade-up">
+      kamu lebih kuat dari yang kamu kira. ♡
+    </p>
+    <button class="replay-btn fade-up" id="replayBtn">play again ♡</button>
+  </section>
+
+</div><!-- end mainWebsite -->
+
+<script>
+// ===== CANVAS STARS =====
+const canvas = document.getElementById('starCanvas');
+const ctx = canvas.getContext('2d');
+let stars = [], particles = [];
+let W, H;
+
+function resizeCanvas() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function initStars() {
+  stars = [];
+  for (let i = 0; i < 180; i++) {
+    stars.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() * 1.5 + 0.3,
+      alpha: Math.random() * 0.6 + 0.1,
+      speed: Math.random() * 0.3 + 0.05,
+      twinkleSpeed: Math.random() * 0.02 + 0.005,
+      twinkleDir: Math.random() > 0.5 ? 1 : -1,
+      hue: Math.random() > 0.7 ? 'pink' : 'white'
+    });
+  }
+}
+initStars();
+
+function drawStars() {
+  ctx.clearRect(0, 0, W, H);
+  stars.forEach(s => {
+    s.alpha += s.twinkleSpeed * s.twinkleDir;
+    if (s.alpha > 0.8 || s.alpha < 0.05) s.twinkleDir *= -1;
+    s.y -= s.speed;
+    if (s.y < 0) { s.y = H; s.x = Math.random() * W; }
+
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    if (s.hue === 'pink') {
+      ctx.fillStyle = `rgba(214,63,140,${s.alpha})`;
+    } else {
+      ctx.fillStyle = `rgba(245,221,228,${s.alpha})`;
+    }
+    ctx.fill();
+
+    // Tiny glow for some stars
+    if (s.r > 1.2) {
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r * 3, 0, Math.PI * 2);
+      const grad = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r * 3);
+      grad.addColorStop(0, `rgba(214,63,140,${s.alpha * 0.15})`);
+      grad.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad;
+      ctx.fill();
+    }
+  });
+  requestAnimationFrame(drawStars);
+}
+drawStars();
+
+// ===== CURSOR =====
+const cursorDot = document.getElementById('cursorDot');
+let cx = -100, cy = -100;
+document.addEventListener('mousemove', e => {
+  cx = e.clientX; cy = e.clientY;
+  cursorDot.style.left = (cx - 4) + 'px';
+  cursorDot.style.top = (cy - 4) + 'px';
+});
+
+// ===== FLOATING HEARTS on click =====
+document.addEventListener('click', e => {
+  if (document.getElementById('passwordScreen').style.opacity === '0' || 
+      document.getElementById('mainWebsite').classList.contains('visible')) {
+    const hearts = ['♡','✦','✿','⋆','🌸'];
+    for (let i = 0; i < 3; i++) {
+      setTimeout(() => {
+        const h = document.createElement('div');
+        h.className = 'floating-heart';
+        h.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+        h.style.left = (e.clientX + (Math.random()-0.5)*40) + 'px';
+        h.style.top = e.clientY + 'px';
+        h.style.color = ['#c9879c','#e8b4c0','#d63f8c'][Math.floor(Math.random()*3)];
+        h.style.fontSize = (0.7 + Math.random() * 0.8) + 'rem';
+        h.style.animationDelay = (i * 0.1) + 's';
+        document.body.appendChild(h);
+        setTimeout(() => h.remove(), 3000);
+      }, i * 80);
+    }
+  }
+});
+
+// ===== PASSWORD =====
+const pwInput = document.getElementById('pwInput');
+const pwBtn = document.getElementById('pwBtn');
+const pwError = document.getElementById('pwError');
+const PASSWORD = 'Putri Ghina Nuraini';
+
+function tryPassword() {
+  const val = pwInput.value.trim();
+  if (val.toLowerCase() === PASSWORD.toLowerCase()) {
+    startTransition();
+  } else {
+    pwError.classList.add('show');
+    pwInput.style.borderColor = 'rgba(214,63,140,0.6)';
+    pwInput.style.boxShadow = '0 0 20px rgba(214,63,140,0.2)';
+    pwInput.value = '';
+    setTimeout(() => {
+      pwError.classList.remove('show');
+      pwInput.style.borderColor = '';
+      pwInput.style.boxShadow = '';
+    }, 2500);
+  }
+}
+
+pwBtn.addEventListener('click', tryPassword);
+pwInput.addEventListener('keydown', e => { if (e.key === 'Enter') tryPassword(); });
+
+function startTransition() {
+  const pw = document.getElementById('passwordScreen');
+  pw.style.opacity = '0';
+  pw.style.pointerEvents = 'none';
+
+  setTimeout(() => {
+    const ls = document.getElementById('loadingScreen');
+    ls.classList.add('active');
+    createLoadingParticles();
+    startCountdown();
+  }, 1200);
+}
+
+function createLoadingParticles() {
+  const container = document.getElementById('loadingParticles');
+  for (let i = 0; i < 20; i++) {
+    const p = document.createElement('div');
+    p.className = 'l-particle';
+    p.style.cssText = `
+      left: ${Math.random() * 100}%;
+      top: ${80 + Math.random() * 20}%;
+      animation-delay: ${Math.random() * 2}s;
+      animation-duration: ${1.5 + Math.random() * 1.5}s;
+      background: ${Math.random() > 0.5 ? '#d63f8c' : '#c9879c'};
+      width: ${2 + Math.random() * 3}px;
+      height: ${2 + Math.random() * 3}px;
+    `;
+    container.appendChild(p);
+  }
+}
+
+function startCountdown() {
+  const numEl = document.getElementById('countdownNum');
+  let count = 5;
+  numEl.textContent = count;
+
+  const interval = setInterval(() => {
+    count--;
+    numEl.style.transform = 'scale(0.5)';
+    numEl.style.opacity = '0';
+    setTimeout(() => {
+      if (count > 0) {
+        numEl.textContent = count;
+        numEl.style.transform = 'scale(1)';
+        numEl.style.opacity = '1';
+      } else {
+        clearInterval(interval);
+        showMainWebsite();
+      }
+    }, 250);
+  }, 1000);
+}
+
+function showMainWebsite() {
+  const ls = document.getElementById('loadingScreen');
+  ls.style.opacity = '0';
+  ls.style.pointerEvents = 'none';
+
+  const pw = document.getElementById('passwordScreen');
+  pw.style.display = 'none';
+
+  setTimeout(() => {
+    ls.style.display = 'none';
+    const main = document.getElementById('mainWebsite');
+    main.classList.add('visible');
+    // Trigger hero fade-ups
+    setTimeout(() => {
+      document.querySelectorAll('#hero .fade-up').forEach((el, i) => {
+        setTimeout(() => el.classList.add('revealed'), i * 200);
+      });
+    }, 400);
+  }, 800);
+}
+
+// ===== SCROLL REVEAL =====
+const scrollObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('revealed');
+    }
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.fade-up, .msg-line').forEach(el => {
+  scrollObserver.observe(el);
+});
+
+// ===== PROGRESS BAR =====
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docHeight = document.body.scrollHeight - window.innerHeight;
+  const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+  document.getElementById('progressBar').style.width = progress + '%';
+});
+
+// ===== PARALLAX =====
+window.addEventListener('scroll', () => {
+  const scrollY = window.scrollY;
+  const heroGlow = document.querySelector('.hero-glow');
+  if (heroGlow) {
+    heroGlow.style.transform = `translate(-50%, calc(-50% + ${scrollY * 0.3}px))`;
+  }
+  const heroLayer = document.querySelector('#hero .parallax-layer');
+  if (heroLayer) {
+    heroLayer.style.transform = `translateY(${scrollY * 0.15}px)`;
+  }
+});
+
+// ===== REPLAY =====
+document.getElementById('replayBtn').addEventListener('click', () => {
+  const main = document.getElementById('mainWebsite');
+  main.style.opacity = '0';
+
+  setTimeout(() => {
+    main.classList.remove('visible');
+    main.style.opacity = '';
+
+    // Reset fade-up elements
+    document.querySelectorAll('.fade-up, .msg-line').forEach(el => {
+      el.classList.remove('revealed');
+    });
+
+    // Re-show password screen
+    const pw = document.getElementById('passwordScreen');
+    pw.style.display = '';
+    pw.style.opacity = '0';
+    pw.style.pointerEvents = '';
+    pwInput.value = '';
+
+    setTimeout(() => {
+      pw.style.opacity = '1';
+      window.scrollTo(0, 0);
+    }, 50);
+  }, 800);
+});
+
+// ===== POLAROID TILT on hover (mouse tracking) =====
+document.querySelectorAll('.polaroid').forEach(pol => {
+  pol.addEventListener('mousemove', e => {
+    const rect = pol.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    const base = pol === document.querySelectorAll('.polaroid')[0] ? -4 : 3.5;
+    const yOff = pol === document.querySelectorAll('.polaroid')[0] ? 0 : -20;
+    pol.style.transform = `rotate(${base + x * 8}deg) translateY(${yOff + y * 10}px) scale(1.05)`;
+  });
+  pol.addEventListener('mouseleave', () => {
+    const isFirst = pol === document.querySelectorAll('.polaroid')[0];
+    pol.style.transform = isFirst ? 'rotate(-4deg)' : 'rotate(3.5deg) translateY(-20px)';
+  });
+});
+</script>
+</body>
+</html>
