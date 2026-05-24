@@ -32,17 +32,6 @@
     cursor: crosshair;
   }
 
-  /* ===== CURSOR ===== */
-  .cursor-dot {
-    width: 8px; height: 8px;
-    background: var(--dusty-pink);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 99999;
-    transition: transform 0.1s ease;
-    mix-blend-mode: screen;
-  }
 
   /* ===== CANVAS STARS ===== */
   #starCanvas {
@@ -717,7 +706,6 @@
 </head>
 <body>
 
-<div class="cursor-dot" id="cursorDot"></div>
 <div class="progress-bar" id="progressBar" style="width:0%"></div>
 <canvas id="starCanvas"></canvas>
 
@@ -923,15 +911,6 @@ function drawStars() {
   requestAnimationFrame(drawStars);
 }
 drawStars();
-
-// ===== CURSOR =====
-const cursorDot = document.getElementById('cursorDot');
-let cx = -100, cy = -100;
-document.addEventListener('mousemove', e => {
-  cx = e.clientX; cy = e.clientY;
-  cursorDot.style.left = (cx - 4) + 'px';
-  cursorDot.style.top = (cy - 4) + 'px';
-});
 
 // ===== FLOATING HEARTS on click =====
 document.addEventListener('click', e => {
